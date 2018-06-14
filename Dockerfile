@@ -2,8 +2,19 @@ FROM stakater/base-debian9:9-0.0.1
 LABEL maintainer="Stakater Team"
 LABEL Description="Fluentd docker image atop Debian9"
 
+## Why dumb-init?
+# dumb-init is a simple process supervisor and init system designed to run as PID 1 inside minimal container 
+# environments (such as Docker). It is deployed as a small, statically-linked binary written in C.
+# https://github.com/Yelp/dumb-init
 ENV DUMB_INIT_VERSION=1.2.0
 
+## Why gosu?
+# Dockerfiles are for creating images. I see gosu as more useful as part of a container initialization when you can 
+# no longer change users between run commands in your Dockerfile.
+# After the image is created, something like gosu allows you to drop root permissions at the end of your entrypoint 
+# inside of a container. You may initially need root access to do some initialization steps (fixing uid's, host mounted 
+# volume permissions, etc). Then once initialized, you run the final service without root privileges and as pid 1 to 
+# handle signals cleanly.
 ENV GOSU_VERSION=1.10
 
 ARG DEBIAN_FRONTEND=noninteractive
